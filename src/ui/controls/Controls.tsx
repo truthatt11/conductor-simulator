@@ -1,0 +1,104 @@
+import type { Dynamic, TimeSignature } from '../../domain/score/types';
+import {
+  supportedMeters,
+  supportedPathsForMeter,
+} from '../../domain/conducting/compatibility';
+
+type ControlsProps = {
+  bpm: number;
+  timeSignature: TimeSignature;
+  pathId: string;
+  dynamic: Dynamic;
+  isPlaying: boolean;
+  onBpmChange: (bpm: number) => void;
+  onTimeSignatureChange: (ts: TimeSignature) => void;
+  onPathIdChange: (id: string) => void;
+  onDynamicChange: (d: Dynamic) => void;
+  onTogglePlay: () => void;
+};
+
+const DYNAMICS: ReadonlyArray<Dynamic> = ['pp', 'p', 'mp', 'mf', 'f', 'ff'];
+
+function meterLabel(ts: TimeSignature): string {
+  return `${ts.numerator}/${ts.denominator}`;
+}
+
+export function Controls({
+  bpm,
+  timeSignature,
+  pathId,
+  dynamic,
+  isPlaying,
+  onBpmChange,
+  onTimeSignatureChange,
+  onPathIdChange,
+  onDynamicChange,
+  onTogglePlay,
+}: ControlsProps) {
+  const meters = supportedMeters();
+  const compatiblePaths = supportedPathsForMeter(timeSignature);
+  const meterKey = meterLabel(timeSignature);
+
+  return (
+    <div className="controls">
+      <button
+        type="button"
+        onClick={onTogglePlay}
+        aria-label={isPlaying ? 'Pause' : 'Play'}
+        className="play-button"
+      >
+        {isPlaying ? '⏸ Pause' : '▶ Play'}
+      </button>
+
+      <label className="field">
+        <span>BPM</span>
+        <input
+          type="number"
+          min={30}
+          max={240}
+          value={bpm}
+          onChange={(e) => onBpmChange(Number(e.target.value))}
+        />
+      </label>
+
+      <label className="field">
+        <span>Meter (拍號)</span>
+        <select
+          value={meterKey}
+          onChange={(e) => {
+            const found = meters.find((m) => meterLabel(m) === e.target.value);
+            if (found) onTimeSignatureChange(found);
+          }}
+        >
+          {meters.map((m) => (
+            <option key={meterLabel(m)} value={meterLabel(m)}>
+              {meterLabel(m)}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label className="field">
+        <span>Path (指揮圖形)</span>
+        <select value={pathId} onChange={(e) => onPathIdChange(e.target.value)}>
+          {compatiblePaths.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.label}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label className="field">
+        <span>Dynamic</span>
+        <select value={dynamic} onChange={(e) => onDynamicChange(e.target.value as Dynamic)}>
+          {DYNAMICS.map((d) => (
+            <option key={d} value={d}>
+              {d}
+            </option>
+          ))}
+        </select>
+      </label>
+    </div>
+  );
+}
