@@ -11,6 +11,7 @@ export type AppState = {
   isPlaying: boolean;
   showTrajectory: boolean;
   showBeatAnchors: boolean;
+  showSamplePoints: boolean;
   setBpm: (bpm: number) => void;
   setTimeSignature: (ts: TimeSignature) => void;
   setPathId: (id: string) => void;
@@ -18,6 +19,7 @@ export type AppState = {
   setPlaying: (p: boolean) => void;
   setShowTrajectory: (v: boolean) => void;
   setShowBeatAnchors: (v: boolean) => void;
+  setShowSamplePoints: (v: boolean) => void;
 };
 
 const INITIAL_METER: TimeSignature = { numerator: 4, denominator: 4 };
@@ -30,6 +32,7 @@ export const useAppStore = create<AppState>((set) => ({
   isPlaying: false,
   showTrajectory: true,
   showBeatAnchors: true,
+  showSamplePoints: false,
   setBpm: (bpm) => set({ bpm: clamp(bpm, 30, 240) }),
   setTimeSignature: (timeSignature) =>
     set((s) => {
@@ -45,6 +48,7 @@ export const useAppStore = create<AppState>((set) => ({
   setPlaying: (isPlaying) => set({ isPlaying }),
   setShowTrajectory: (showTrajectory) => set({ showTrajectory }),
   setShowBeatAnchors: (showBeatAnchors) => set({ showBeatAnchors }),
+  setShowSamplePoints: (showSamplePoints) => set({ showSamplePoints }),
 }));
 
 function clamp(n: number, lo: number, hi: number) {

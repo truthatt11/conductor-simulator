@@ -12,6 +12,7 @@ export function App() {
   const isPlaying = useAppStore((s) => s.isPlaying);
   const showTrajectory = useAppStore((s) => s.showTrajectory);
   const showBeatAnchors = useAppStore((s) => s.showBeatAnchors);
+  const showSamplePoints = useAppStore((s) => s.showSamplePoints);
   const setBpm = useAppStore((s) => s.setBpm);
   const setTimeSignature = useAppStore((s) => s.setTimeSignature);
   const setPathId = useAppStore((s) => s.setPathId);
@@ -19,6 +20,7 @@ export function App() {
   const setPlaying = useAppStore((s) => s.setPlaying);
   const setShowTrajectory = useAppStore((s) => s.setShowTrajectory);
   const setShowBeatAnchors = useAppStore((s) => s.setShowBeatAnchors);
+  const setShowSamplePoints = useAppStore((s) => s.setShowSamplePoints);
 
   const path = requirePath(pathId);
   const amplitude = amplitudeFor(dynamic);
@@ -43,6 +45,7 @@ export function App() {
         isPlaying={isPlaying}
         showTrajectory={showTrajectory}
         showBeatAnchors={showBeatAnchors}
+        showSamplePoints={showSamplePoints}
         onBpmChange={setBpm}
         onTimeSignatureChange={setTimeSignature}
         onPathIdChange={setPathId}
@@ -50,6 +53,7 @@ export function App() {
         onTogglePlay={() => setPlaying(!isPlaying)}
         onToggleTrajectory={() => setShowTrajectory(!showTrajectory)}
         onToggleBeatAnchors={() => setShowBeatAnchors(!showBeatAnchors)}
+        onToggleSamplePoints={() => setShowSamplePoints(!showSamplePoints)}
       />
 
       <div className="stage">
@@ -60,6 +64,7 @@ export function App() {
           isPlaying={isPlaying}
           showTrajectory={showTrajectory}
           showBeatAnchors={showBeatAnchors}
+          showSamplePoints={showSamplePoints}
         />
       </div>
 

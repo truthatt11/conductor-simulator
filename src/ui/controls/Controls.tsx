@@ -13,6 +13,7 @@ type ControlsProps = {
   isPlaying: boolean;
   showTrajectory: boolean;
   showBeatAnchors: boolean;
+  showSamplePoints: boolean;
   onBpmChange: (bpm: number) => void;
   onTimeSignatureChange: (ts: TimeSignature) => void;
   onPathIdChange: (id: string) => void;
@@ -20,6 +21,7 @@ type ControlsProps = {
   onTogglePlay: () => void;
   onToggleTrajectory: () => void;
   onToggleBeatAnchors: () => void;
+  onToggleSamplePoints: () => void;
 };
 
 const DYNAMICS: ReadonlyArray<Dynamic> = ['pp', 'p', 'mp', 'mf', 'f', 'ff'];
@@ -36,6 +38,7 @@ export function Controls({
   isPlaying,
   showTrajectory,
   showBeatAnchors,
+  showSamplePoints,
   onBpmChange,
   onTimeSignatureChange,
   onPathIdChange,
@@ -43,6 +46,7 @@ export function Controls({
   onTogglePlay,
   onToggleTrajectory,
   onToggleBeatAnchors,
+  onToggleSamplePoints,
 }: ControlsProps) {
   const meters = supportedMeters();
   const compatiblePaths = supportedPathsForMeter(timeSignature);
@@ -143,6 +147,15 @@ export function Controls({
         className="toggle-button"
       >
         {showBeatAnchors ? '隱藏拍點' : '顯示拍點'}
+      </button>
+
+      <button
+        type="button"
+        onClick={onToggleSamplePoints}
+        aria-pressed={showSamplePoints}
+        className="toggle-button"
+      >
+        {showSamplePoints ? '隱藏取樣點' : '顯示取樣點'}
       </button>
     </div>
   );

@@ -9,11 +9,13 @@ type BatonViewProps = {
   showDebug?: boolean;
   showTrajectory?: boolean;
   showBeatAnchors?: boolean;
+  showSamplePoints?: boolean;
 };
 
 const VIEW_SIZE = 480;
 const PADDING = 40;
 const CURVE_SAMPLES = 240;
+const SAMPLE_POINT_COUNT = 256;
 
 function toScreen(v: Vec2): Vec2 {
   const cx = VIEW_SIZE / 2;
@@ -40,6 +42,7 @@ export function BatonView({
   showDebug = true,
   showTrajectory = true,
   showBeatAnchors = true,
+  showSamplePoints = false,
 }: BatonViewProps) {
   const dotRef = useRef<SVGCircleElement | null>(null);
   const rafRef = useRef<number | null>(null);
@@ -71,6 +74,13 @@ export function BatonView({
     toScreen({ x: a.x * amplitude, y: a.y * amplitude }),
   );
 
+  const samplePoints: Vec2[] = [];
+  if (showSamplePoints) {
+    for (let i = 0; i < SAMPLE_POINT_COUNT; i++) {
+      samplePoints.push(toScreen(path.sample(i / SAMPLE_POINT_COUNT, { amplitude })));
+    }
+  }
+
   return (
     <svg
       viewBox={`0 0 ${VIEW_SIZE} ${VIEW_SIZE}`}
@@ -89,6 +99,11 @@ export function BatonView({
       {showTrajectory && (
         <path d={pathD} stroke="#4a90e2" strokeWidth={2} fill="none" opacity={0.5} />
       )}
+
+      {showSamplePoints &&
+        samplePoints.map((s, i) => (
+          <circle key={i} cx={s.x} cy={s.y} r={2.5} fill="#f5b942" opacity={0.85} />
+        ))}
 
       {showBeatAnchors &&
         anchors.map((a, i) => (
