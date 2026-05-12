@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import type { Dynamic, TimeSignature } from '../../domain/score/types';
 import {
   supportedMeters,
@@ -39,6 +40,20 @@ export function Controls({
   const compatiblePaths = supportedPathsForMeter(timeSignature);
   const meterKey = meterLabel(timeSignature);
 
+  const [bpmDraft, setBpmDraft] = useState(String(bpm));
+  useEffect(() => {
+    setBpmDraft(String(bpm));
+  }, [bpm]);
+
+  function commitBpm() {
+    const n = Number(bpmDraft);
+    if (Number.isFinite(n) && n > 0) {
+      onBpmChange(n);
+    } else {
+      setBpmDraft(String(bpm));
+    }
+  }
+
   return (
     <div className="controls">
       <button
@@ -56,8 +71,12 @@ export function Controls({
           type="number"
           min={30}
           max={240}
-          value={bpm}
-          onChange={(e) => onBpmChange(Number(e.target.value))}
+          value={bpmDraft}
+          onChange={(e) => setBpmDraft(e.target.value)}
+          onBlur={commitBpm}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') e.currentTarget.blur();
+          }}
         />
       </label>
 
