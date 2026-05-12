@@ -9,11 +9,15 @@ export type AppState = {
   pathId: string;
   dynamic: Dynamic;
   isPlaying: boolean;
+  showTrajectory: boolean;
+  showBeatAnchors: boolean;
   setBpm: (bpm: number) => void;
   setTimeSignature: (ts: TimeSignature) => void;
   setPathId: (id: string) => void;
   setDynamic: (d: Dynamic) => void;
   setPlaying: (p: boolean) => void;
+  setShowTrajectory: (v: boolean) => void;
+  setShowBeatAnchors: (v: boolean) => void;
 };
 
 const INITIAL_METER: TimeSignature = { numerator: 4, denominator: 4 };
@@ -24,6 +28,8 @@ export const useAppStore = create<AppState>((set) => ({
   pathId: defaultPathForMeter(INITIAL_METER).id,
   dynamic: 'mf',
   isPlaying: false,
+  showTrajectory: true,
+  showBeatAnchors: true,
   setBpm: (bpm) => set({ bpm: clamp(bpm, 30, 240) }),
   setTimeSignature: (timeSignature) =>
     set((s) => {
@@ -37,6 +43,8 @@ export const useAppStore = create<AppState>((set) => ({
     }),
   setDynamic: (dynamic) => set({ dynamic }),
   setPlaying: (isPlaying) => set({ isPlaying }),
+  setShowTrajectory: (showTrajectory) => set({ showTrajectory }),
+  setShowBeatAnchors: (showBeatAnchors) => set({ showBeatAnchors }),
 }));
 
 function clamp(n: number, lo: number, hi: number) {

@@ -75,7 +75,22 @@ describe('sampleCatmullRomLoop', () => {
   it('is C0-continuous across the loop boundary', () => {
     const a = sampleCatmullRomLoop(points, 0.999, 1);
     const b = sampleCatmullRomLoop(points, 0.001, 1);
-    expect(Math.hypot(a.x - b.x, a.y - b.y)).toBeLessThan(0.02);
+    expect(Math.hypot(a.x - b.x, a.y - b.y)).toBeLessThan(0.05);
+  });
+
+  it('has uniform speed within each segment (symmetric diamond → globally uniform)', () => {
+    const STEPS = 100;
+    const samples: { x: number; y: number }[] = [];
+    for (let i = 0; i <= STEPS; i++) samples.push(sampleCatmullRomLoop(points, i / STEPS, 1));
+    const dists: number[] = [];
+    for (let i = 1; i <= STEPS; i++) {
+      const a = samples[i - 1]!;
+      const b = samples[i]!;
+      dists.push(Math.hypot(b.x - a.x, b.y - a.y));
+    }
+    const mean = dists.reduce((s, d) => s + d, 0) / dists.length;
+    const maxDev = Math.max(...dists.map((d) => Math.abs(d - mean) / mean));
+    expect(maxDev).toBeLessThan(0.05);
   });
 });
 

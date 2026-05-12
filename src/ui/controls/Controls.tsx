@@ -11,11 +11,15 @@ type ControlsProps = {
   pathId: string;
   dynamic: Dynamic;
   isPlaying: boolean;
+  showTrajectory: boolean;
+  showBeatAnchors: boolean;
   onBpmChange: (bpm: number) => void;
   onTimeSignatureChange: (ts: TimeSignature) => void;
   onPathIdChange: (id: string) => void;
   onDynamicChange: (d: Dynamic) => void;
   onTogglePlay: () => void;
+  onToggleTrajectory: () => void;
+  onToggleBeatAnchors: () => void;
 };
 
 const DYNAMICS: ReadonlyArray<Dynamic> = ['pp', 'p', 'mp', 'mf', 'f', 'ff'];
@@ -30,11 +34,15 @@ export function Controls({
   pathId,
   dynamic,
   isPlaying,
+  showTrajectory,
+  showBeatAnchors,
   onBpmChange,
   onTimeSignatureChange,
   onPathIdChange,
   onDynamicChange,
   onTogglePlay,
+  onToggleTrajectory,
+  onToggleBeatAnchors,
 }: ControlsProps) {
   const meters = supportedMeters();
   const compatiblePaths = supportedPathsForMeter(timeSignature);
@@ -118,6 +126,24 @@ export function Controls({
           ))}
         </select>
       </label>
+
+      <button
+        type="button"
+        onClick={onToggleTrajectory}
+        aria-pressed={showTrajectory}
+        className="toggle-button"
+      >
+        {showTrajectory ? '隱藏軌跡' : '顯示軌跡'}
+      </button>
+
+      <button
+        type="button"
+        onClick={onToggleBeatAnchors}
+        aria-pressed={showBeatAnchors}
+        className="toggle-button"
+      >
+        {showBeatAnchors ? '隱藏拍點' : '顯示拍點'}
+      </button>
     </div>
   );
 }

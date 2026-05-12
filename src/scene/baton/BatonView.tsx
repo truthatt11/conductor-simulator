@@ -7,6 +7,8 @@ type BatonViewProps = {
   getBeatPosition: () => number;
   isPlaying: boolean;
   showDebug?: boolean;
+  showTrajectory?: boolean;
+  showBeatAnchors?: boolean;
 };
 
 const VIEW_SIZE = 480;
@@ -36,6 +38,8 @@ export function BatonView({
   getBeatPosition,
   isPlaying,
   showDebug = true,
+  showTrajectory = true,
+  showBeatAnchors = true,
 }: BatonViewProps) {
   const dotRef = useRef<SVGCircleElement | null>(null);
   const rafRef = useRef<number | null>(null);
@@ -82,23 +86,26 @@ export function BatonView({
         </>
       )}
 
-      <path d={pathD} stroke="#4a90e2" strokeWidth={2} fill="none" opacity={0.5} />
+      {showTrajectory && (
+        <path d={pathD} stroke="#4a90e2" strokeWidth={2} fill="none" opacity={0.5} />
+      )}
 
-      {anchors.map((a, i) => (
-        <g key={i}>
-          <circle cx={a.x} cy={a.y} r={8} fill={i === 0 ? '#e2554a' : '#4a90e2'} opacity={0.7} />
-          <text
-            x={a.x}
-            y={a.y - 14}
-            fill="#e7e7ea"
-            fontSize={14}
-            textAnchor="middle"
-            fontWeight="bold"
-          >
-            {i + 1}
-          </text>
-        </g>
-      ))}
+      {showBeatAnchors &&
+        anchors.map((a, i) => (
+          <g key={i}>
+            <circle cx={a.x} cy={a.y} r={8} fill={i === 0 ? '#e2554a' : '#4a90e2'} opacity={0.7} />
+            <text
+              x={a.x}
+              y={a.y - 14}
+              fill="#e7e7ea"
+              fontSize={14}
+              textAnchor="middle"
+              fontWeight="bold"
+            >
+              {i + 1}
+            </text>
+          </g>
+        ))}
 
       <circle ref={dotRef} cx={VIEW_SIZE / 2} cy={VIEW_SIZE / 2} r={10} fill="#fff" opacity={isPlaying ? 1 : 0.3} />
     </svg>

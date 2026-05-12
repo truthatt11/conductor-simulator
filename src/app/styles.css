@@ -56,6 +56,26 @@ body {
   background: #5aa0f2;
 }
 
+.toggle-button {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #2a2d36;
+  background: #1d1f25;
+  color: #e7e7ea;
+  font-size: 13px;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+.toggle-button:hover {
+  border-color: #4a90e2;
+}
+
+.toggle-button[aria-pressed='false'] {
+  color: #a0a3ad;
+  background: #15161a;
+}
+
 .field {
   display: flex;
   flex-direction: column;
