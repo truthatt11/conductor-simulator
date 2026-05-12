@@ -1,5 +1,5 @@
 import type { ConductingPath, Vec2 } from '../types';
-import { sampleAlongAnchors } from '../curve';
+import { sampleCatmullRomLoop } from '../curve';
 
 const ANCHORS: ReadonlyArray<Vec2> = [
   { x: 0, y: -1 },
@@ -13,6 +13,6 @@ export const threeBeatPath: ConductingPath = {
   beatCount: 3,
   beatAnchors: ANCHORS,
   sample(t, opts) {
-    return sampleAlongAnchors(ANCHORS, t, 0.25, opts.amplitude);
+    return sampleCatmullRomLoop(ANCHORS, t, opts.amplitude);
   },
 };

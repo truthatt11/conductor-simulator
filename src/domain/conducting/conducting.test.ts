@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { findPath, listPaths, requirePath } from './registry';
-import { sampleAlongAnchors, sampleQuadraticBezier } from './curve';
+import { sampleCatmullRomLoop, sampleCatmullRomSegment } from './curve';
 import type { ConductingPath } from './types';
 
 describe('path registry', () => {
@@ -21,44 +21,61 @@ describe('path registry', () => {
   });
 });
 
-describe('quadratic bezier', () => {
-  it('at s=0 returns p0', () => {
-    const p = sampleQuadraticBezier({ x: 1, y: 2 }, { x: 3, y: 4 }, { x: 5, y: 6 }, 0);
-    expect(p).toEqual({ x: 1, y: 2 });
+describe('sampleCatmullRomSegment', () => {
+  const p0 = { x: -1, y: 0 };
+  const p1 = { x: 0, y: 0 };
+  const p2 = { x: 1, y: 1 };
+  const p3 = { x: 2, y: 0 };
+
+  it('at s=0 returns p1', () => {
+    const p = sampleCatmullRomSegment(p0, p1, p2, p3, 0);
+    expect(p.x).toBeCloseTo(0, 9);
+    expect(p.y).toBeCloseTo(0, 9);
   });
 
   it('at s=1 returns p2', () => {
-    const p = sampleQuadraticBezier({ x: 1, y: 2 }, { x: 3, y: 4 }, { x: 5, y: 6 }, 1);
-    expect(p).toEqual({ x: 5, y: 6 });
+    const p = sampleCatmullRomSegment(p0, p1, p2, p3, 1);
+    expect(p.x).toBeCloseTo(1, 9);
+    expect(p.y).toBeCloseTo(1, 9);
   });
 });
 
-describe('sampleAlongAnchors', () => {
-  const anchors = [
+describe('sampleCatmullRomLoop', () => {
+  const points = [
     { x: 0, y: -1 },
+    { x: 1, y: 0 },
     { x: 0, y: 1 },
+    { x: -1, y: 0 },
   ];
 
-  it('passes through each anchor at i/N', () => {
-    const p0 = sampleAlongAnchors(anchors, 0, 0, 1);
-    const p1 = sampleAlongAnchors(anchors, 0.5, 0, 1);
-    expect(p0.x).toBeCloseTo(0, 6);
-    expect(p0.y).toBeCloseTo(-1, 6);
-    expect(p1.x).toBeCloseTo(0, 6);
-    expect(p1.y).toBeCloseTo(1, 6);
+  it('passes through each control point at t = i/N', () => {
+    for (let i = 0; i < points.length; i++) {
+      const p = sampleCatmullRomLoop(points, i / points.length, 1);
+      expect(p.x).toBeCloseTo(points[i]!.x, 6);
+      expect(p.y).toBeCloseTo(points[i]!.y, 6);
+    }
   });
 
   it('scales amplitude', () => {
-    const p = sampleAlongAnchors(anchors, 0, 0, 0.5);
+    const p = sampleCatmullRomLoop(points, 0, 0.5);
+    expect(p.x).toBeCloseTo(0, 6);
     expect(p.y).toBeCloseTo(-0.5, 6);
   });
 
-  it('wraps t outside [0, 1)', () => {
-    const p0 = sampleAlongAnchors(anchors, 0, 0, 1);
-    const p1 = sampleAlongAnchors(anchors, 1, 0, 1);
-    const p2 = sampleAlongAnchors(anchors, 2, 0, 1);
-    expect(p1.y).toBeCloseTo(p0.y, 6);
-    expect(p2.y).toBeCloseTo(p0.y, 6);
+  it('wraps t outside [0, 1) — closed loop', () => {
+    const a = sampleCatmullRomLoop(points, 0.25, 1);
+    const b = sampleCatmullRomLoop(points, 1.25, 1);
+    const c = sampleCatmullRomLoop(points, -0.75, 1);
+    expect(b.x).toBeCloseTo(a.x, 6);
+    expect(b.y).toBeCloseTo(a.y, 6);
+    expect(c.x).toBeCloseTo(a.x, 6);
+    expect(c.y).toBeCloseTo(a.y, 6);
+  });
+
+  it('is C0-continuous across the loop boundary', () => {
+    const a = sampleCatmullRomLoop(points, 0.999, 1);
+    const b = sampleCatmullRomLoop(points, 0.001, 1);
+    expect(Math.hypot(a.x - b.x, a.y - b.y)).toBeLessThan(0.02);
   });
 });
 
